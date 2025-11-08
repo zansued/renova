@@ -1,0 +1,11 @@
+{
+  "name": "renova-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@8.15.5",
+  "scripts": {
+    "dev": "pnpm -r --filter ./apps/* dev",
+    "lint": "pnpm -r --filter ./apps/* lint",
+    "test": "pnpm -r --filter ./apps/* test"
+  }
+}

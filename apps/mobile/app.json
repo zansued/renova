@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Renova",
+    "slug": "renova-mobile",
+    "scheme": "renova",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "sdkVersion": "50.0.0",
+    "platforms": ["ios", "android", "web"],
+    "extra": {
+      "eas": {
+        "projectId": "replace-with-your-project-id"
+      }
+    }
+  }
+}
