@@ -62,3 +62,20 @@ Você é livre para usar, modificar e redistribuir, desde que mantenha a mesma l
 **Guilherme Zanini de Sá**  
 Escritor cristão, teólogo e criador de conteúdo.  
 Apaixonado por unir fé, razão e tecnologia para inspirar transformação.  
+
+## 🚀 Backend (apps/api)
+
+Para executar o backend Express localizado em `apps/api`:
+
+1. Instale as dependências com `npm install`.
+2. Configure as variáveis de ambiente copiando `.env.example` para `.env` e ajustando, se necessário.
+3. Garanta acesso a uma instância Redis (ex.: serviço VoiceNet) usando as variáveis `REDIS_HOST`, `REDIS_PORT` e `REDIS_PASSWORD`.
+4. Execute `npm run dev` para iniciar o servidor. Ao conectar, o console exibirá **"Redis conectado com sucesso"**.
+
+As variáveis relevantes no `.env.example` são:
+
+```
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=redispass_Q6z9Bf82MpLmX4vw
+```
