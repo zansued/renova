@@ -10,14 +10,16 @@ API REST em Node.js (Express) responsável por registrar pensamentos e executar 
 
 ## Variáveis de ambiente
 
-Crie um arquivo `.env` na pasta `apps/api` com as seguintes variáveis:
+Crie um arquivo `.env` na pasta `apps/api` com as seguintes variáveis (veja `.env.example` para valores de referência):
 
 ```
 PORT=3000
 SUPABASE_URL=https://<sua-instancia>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<sua-chave-service-role>
+SUPABASE_KEY=<sua-chave-de-api>
 REDIS_URL=redis://<usuario>:<senha>@<host>:<porta>/<db>
 ```
+
+> A chave utilizada deve ter permissão para inserir registros na tabela `thoughts` do Supabase. Para desenvolvimento local, você pode aproveitar os valores de exemplo fornecidos em `.env.example`.
 
 ## Instalação
 
@@ -42,7 +44,7 @@ npm start
 
 ## Rotas principais
 
-- `POST /thoughts` — registra um pensamento com `texto`, `emocao` e `usuario_id`.
+- `POST /thoughts` — registra um pensamento com `texto`, `emocao` e `usuario_id` no Supabase.
 - `GET /thoughts/:id` — consulta um pensamento específico (com cache em Redis).
 - `POST /analyze` — retorna uma análise cognitiva mockada para um pensamento informado.
 

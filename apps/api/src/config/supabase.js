@@ -1,21 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
-import { env } from './env.js';
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
-let supabaseClient;
+dotenv.config();
 
-export function getSupabaseClient() {
-  if (!supabaseClient) {
-    if (!env.supabaseUrl || !env.supabaseKey) {
-      throw new Error('Supabase URL e chave não configuradas. Verifique as variáveis de ambiente.');
-    }
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-    supabaseClient = createClient(env.supabaseUrl, env.supabaseKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
-  }
-
-  return supabaseClient;
-}
+export default supabase;
