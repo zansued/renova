@@ -79,3 +79,19 @@ REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_PASSWORD=redispass_Q6z9Bf82MpLmX4vw
 ```
+
+### 🐳 Executando com Docker
+
+Agora o projeto inclui um `Dockerfile` pronto para gerar a imagem do backend.
+
+1. Garanta que o arquivo `apps/api/.env` exista (pode ser copiado de `.env.example`).
+2. Construa a imagem localmente: `docker build -t renova-api ./apps/api`.
+3. Inicie um container passando as mesmas variáveis do `.env` ou use o `docker-compose.yml` apresentado abaixo.
+
+Para subir toda a stack (Traefik, API e Redis) execute:
+
+```bash
+docker compose up -d --build
+```
+
+Por padrão, o Traefik expõe a API em `http://renova.localhost`. Ajuste as labels em `docker-compose.yml` para apontar para o domínio desejado.
