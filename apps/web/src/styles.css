@@ -1,0 +1,378 @@
+:root {
+  color-scheme: light;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f9fafc;
+  color: #2f2a3b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(160deg, #fdf2f8 0%, #f8fafc 40%, #e0f2f1 100%);
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+
+.auth-panel {
+  display: flex;
+  width: min(460px, 100%);
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1.5rem;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 20px 45px -25px rgba(79, 70, 229, 0.4);
+  backdrop-filter: blur(6px);
+}
+
+.auth-card h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #433b8f;
+}
+
+.auth-subtitle {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  color: #6b649c;
+  line-height: 1.5;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.auth-form label {
+  font-weight: 600;
+  color: #433b8f;
+}
+
+.auth-form input {
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.input-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.primary-button,
+.secondary-button,
+.danger-button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #a5b4fc, #818cf8);
+  color: #1f1933;
+  box-shadow: 0 12px 30px -15px rgba(99, 102, 241, 0.7);
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px -16px rgba(99, 102, 241, 0.65);
+}
+
+.secondary-button {
+  background: rgba(99, 102, 241, 0.12);
+  color: #433b8f;
+}
+
+.secondary-button:hover {
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.danger-button {
+  background: rgba(244, 63, 94, 0.12);
+  color: #b91c1c;
+}
+
+.danger-button:hover {
+  background: rgba(244, 63, 94, 0.18);
+}
+
+.auth-footnote {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.dashboard {
+  width: min(1100px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 2rem;
+  padding: 2rem 2.5rem 3rem;
+  box-shadow: 0 30px 50px -30px rgba(59, 130, 246, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #433b8f;
+}
+
+.header-subtitle {
+  color: #6b7280;
+  margin: 0.4rem 0 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(79, 70, 229, 0.12);
+  color: #433b8f;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.25);
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+}
+
+.status-banner {
+  background: rgba(16, 185, 129, 0.18);
+  color: #0f766e;
+  padding: 0.85rem 1.25rem;
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.content-area {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.emotion-form {
+  background: rgba(245, 243, 255, 0.9);
+  border-radius: 1.5rem;
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-grid label {
+  font-weight: 600;
+  color: #433b8f;
+}
+
+.form-grid input,
+.form-grid textarea {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(99, 102, 241, 0.24);
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.8);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-grid input:focus,
+.form-grid textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  outline: none;
+}
+
+.form-grid textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.range-value {
+  font-weight: 600;
+  color: #433b8f;
+  justify-self: end;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.emotion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.emotion-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px -30px rgba(79, 70, 229, 0.45);
+  display: grid;
+  gap: 1rem;
+}
+
+.emotion-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.emotion-card h3 {
+  margin: 0;
+  color: #433b8f;
+}
+
+.emotion-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: #6b7280;
+}
+
+.card-body {
+  display: grid;
+  gap: 1rem;
+}
+
+.card-body h4 {
+  margin: 0 0 0.25rem;
+  color: #433b8f;
+}
+
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.analysis-chip {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: rgba(99, 102, 241, 0.12);
+  border-radius: 999px;
+  color: #433b8f;
+  font-weight: 500;
+}
+
+.chip-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  border: 2px dashed rgba(99, 102, 241, 0.25);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: #6b7280;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.15);
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+
+  .emotion-card header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .form-actions button {
+    flex: 1;
+  }
+}
