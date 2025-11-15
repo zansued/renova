@@ -79,3 +79,21 @@ REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_PASSWORD=redispass_Q6z9Bf82MpLmX4vw
 ```
+
+## 🌸 Frontend web (apps/web)
+
+O projeto agora conta com um front-end web acessível, desenvolvido em React + Vite, com uma interface em tons pastéis para registro emocional completo.
+
+### Como rodar
+
+1. Entre em `apps/web`.
+2. Instale as dependências com `npm install`.
+3. Crie um arquivo `.env` (opcional) para configurar a variável `VITE_API_URL` apontando para o backend (`http://localhost:3000` por padrão).
+4. Execute `npm run dev` para abrir o app em `http://localhost:5173`.
+
+### Recursos disponíveis
+
+- Autenticação simplificada por e-mail com persistência local.
+- CRUD completo de registros emocionais com salvamento no `localStorage`.
+- Integração com o endpoint `/analyze` do backend para obter análises de IA.
+- Layout responsivo com foco em acessibilidade e contraste suave em cores pastéis.
