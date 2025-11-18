@@ -6,6 +6,7 @@
     "apps/web"
   ],
   "scripts": {
+    "setup": "node scripts/setup-env.mjs",
     "dev": "node scripts/run-pair.mjs dev",
     "dev:api": "npm run dev --workspace apps/api",
     "dev:web": "npm run dev --workspace apps/web",

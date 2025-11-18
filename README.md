@@ -62,6 +62,16 @@ Agora é possível instalar todas as dependências e subir API + frontend com po
 
 > Esses scripts funcionam mesmo fora do Docker e eliminam a necessidade de abrir vários terminais manualmente.
 
+## ⚙️ Setup automático dos arquivos `.env`
+
+Antes de rodar qualquer serviço, execute:
+
+```bash
+npm run setup
+```
+
+Esse comando copia todos os `.env.example` para `.env` (sem sobrescrever arquivos existentes), além de gerar uma senha aleatória para `REDIS_PASSWORD` e exibir o valor gerado no terminal. Se quiser recriar algum arquivo, apague o `.env` correspondente e rode o comando novamente.
+
 ---
 
 ## 📜 Licença
@@ -82,6 +92,7 @@ Apaixonado por unir fé, razão e tecnologia para inspirar transformação.
 Para executar o backend Express localizado em `apps/api`:
 
 1. Instale as dependências com `npm install` (na raiz ou dentro de `apps/api`).
+2. Configure as variáveis de ambiente executando `npm run setup` na raiz (ou copie `.env.example` manualmente, se preferir) e ajuste os valores conforme necessário.
 2. Configure as variáveis de ambiente copiando `.env.example` para `.env` e ajustando, se necessário.
 3. Garanta acesso a uma instância Redis (ex.: serviço VoiceNet) usando as variáveis `REDIS_HOST`, `REDIS_PORT` e `REDIS_PASSWORD`.
 4. Execute `npm run dev` para iniciar o servidor (ou `npm run dev:api` na raiz). Ao conectar, o console exibirá **"Redis conectado com sucesso"**.
@@ -102,6 +113,7 @@ O projeto agora conta com um front-end web acessível, desenvolvido em React + V
 
 1. Entre em `apps/web` (opcional se você já está na raiz).
 2. Instale as dependências com `npm install` (ou apenas `npm install` na raiz, que já cobre o workspace).
+3. Ajuste o arquivo `.env` criado pelo `npm run setup` (ou crie um novo manualmente) para configurar a variável `VITE_API_URL` apontando para o backend (`http://localhost:3000` por padrão).
 3. Crie um arquivo `.env` (opcional) para configurar a variável `VITE_API_URL` apontando para o backend (`http://localhost:3000` por padrão).
 4. Execute `npm run dev` para abrir o app em `http://localhost:5173` (ou `npm run dev:web` na raiz para obter o mesmo resultado).
 
