@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  api:
+    ports: []
+    expose:
+      - "3000"
+
+  web:
+    ports: []
+    expose:
+      - "80"
+
+  reverse-proxy:
+    image: caddy:2.7-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-app.example.com}
+      API_DOMAIN: ${API_DOMAIN:-api.example.com}
+      CADDY_EMAIL: ${CADDY_EMAIL:-admin@example.com}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
