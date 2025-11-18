@@ -97,3 +97,29 @@ O projeto agora conta com um front-end web acessível, desenvolvido em React + V
 - CRUD completo de registros emocionais com salvamento no `localStorage`.
 - Integração com o endpoint `/analyze` do backend para obter análises de IA.
 - Layout responsivo com foco em acessibilidade e contraste suave em cores pastéis.
+
+## 🚢 Executando tudo com Docker
+
+Para quem quiser testar o Renova rapidamente, o repositório já inclui Dockerfiles para o backend, frontend e um `docker-compose.yml` que orquestra toda a stack (Redis incluso).
+
+### Pré-requisitos
+
+- Docker
+- Docker Compose (ou `docker compose` integrado ao Docker Desktop)
+
+### Passos
+
+1. Na raiz do projeto, execute:
+
+   ```bash
+   docker compose up --build
+   ```
+
+2. A pilha iniciará com os seguintes serviços/p portas:
+   - **Redis** em `localhost:6379` (senha padrão `redispass_Q6z9Bf82MpLmX4vw`).
+   - **API** em `http://localhost:3000`.
+   - **Frontend** servido pelo Nginx em `http://localhost:8080`.
+
+3. Abra `http://localhost:8080` no navegador para usar o app. O frontend já aponta para a API interna usando a variável `VITE_API_URL` definida no `docker-compose.yml`.
+
+> 💡 Quer apontar para outra API ou senha do Redis? Use `VITE_API_URL` e `REDIS_PASSWORD` como variáveis de ambiente ao rodar `docker compose`, por exemplo `VITE_API_URL=https://sua-api docker compose up`.
