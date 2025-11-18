@@ -160,6 +160,16 @@ Para quem quiser testar o Renova rapidamente, o repositório já inclui Dockerfi
 
 ---
 
+### 🌐 Deploy em VPS com subdomínio e HTTPS
+
+Para hospedar o Renova em uma VPS com domínio próprio, utilize o arquivo
+`docker-compose.vps.yml`, que adiciona um proxy Caddy com TLS automático e
+publica o frontend e a API em subdomínios separados (ex.: `app.seudominio.com`
+e `api.seudominio.com`). O passo a passo completo, incluindo o template da
+`Caddyfile`, está documentado em [`docs/VPS_SETUP.md`](docs/VPS_SETUP.md).
+
+---
+
 ## 📦 Imagens Docker publicadas (GHCR)
 
 Sempre que a branch `main` recebe commits (ou quando você dispara manualmente `workflow_dispatch`), o workflow **Publish Docker images** gera e publica imagens prontas no [GitHub Container Registry (GHCR)](https://ghcr.io):
