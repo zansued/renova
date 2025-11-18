@@ -46,7 +46,21 @@ Inspirado pela *Terapia Cognitivo-Comportamental (TCC)* e pela *teologia da ment
 2. Crie uma *branch* com o nome da sua funcionalidade (`git checkout -b feature/nova-funcionalidade`).  
 3. Faça *commit* das alterações (`git commit -m "Adiciona nova funcionalidade"`).  
 4. Faça *push* para o seu fork (`git push origin feature/nova-funcionalidade`).  
-5. Abra um *Pull Request* aqui no repositório principal.  
+5. Abra um *Pull Request* aqui no repositório principal.
+
+---
+
+## 🧰 Scripts unificados com npm workspaces
+
+Agora é possível instalar todas as dependências e subir API + frontend com poucos comandos a partir da raiz:
+
+1. Execute `npm install` uma única vez para instalar os workspaces `apps/api` e `apps/web`.
+2. Rode `npm run dev` para iniciar os dois serviços em paralelo (saídas prefixadas em `[api]` e `[web]`).
+3. Prefere apenas um serviço? Use `npm run dev:api` ou `npm run dev:web`.
+4. Para gerar builds, execute `npm run build` (o comando percorre todos os workspaces que tiverem script `build`).
+5. Depois de gerar o build do frontend, `npm run start` levanta a API em modo `start` e um preview estático do Vite.
+
+> Esses scripts funcionam mesmo fora do Docker e eliminam a necessidade de abrir vários terminais manualmente.
 
 ---
 
@@ -67,10 +81,10 @@ Apaixonado por unir fé, razão e tecnologia para inspirar transformação.
 
 Para executar o backend Express localizado em `apps/api`:
 
-1. Instale as dependências com `npm install`.
+1. Instale as dependências com `npm install` (na raiz ou dentro de `apps/api`).
 2. Configure as variáveis de ambiente copiando `.env.example` para `.env` e ajustando, se necessário.
 3. Garanta acesso a uma instância Redis (ex.: serviço VoiceNet) usando as variáveis `REDIS_HOST`, `REDIS_PORT` e `REDIS_PASSWORD`.
-4. Execute `npm run dev` para iniciar o servidor. Ao conectar, o console exibirá **"Redis conectado com sucesso"**.
+4. Execute `npm run dev` para iniciar o servidor (ou `npm run dev:api` na raiz). Ao conectar, o console exibirá **"Redis conectado com sucesso"**.
 
 As variáveis relevantes no `.env.example` são:
 
@@ -86,10 +100,10 @@ O projeto agora conta com um front-end web acessível, desenvolvido em React + V
 
 ### Como rodar
 
-1. Entre em `apps/web`.
-2. Instale as dependências com `npm install`.
+1. Entre em `apps/web` (opcional se você já está na raiz).
+2. Instale as dependências com `npm install` (ou apenas `npm install` na raiz, que já cobre o workspace).
 3. Crie um arquivo `.env` (opcional) para configurar a variável `VITE_API_URL` apontando para o backend (`http://localhost:3000` por padrão).
-4. Execute `npm run dev` para abrir o app em `http://localhost:5173`.
+4. Execute `npm run dev` para abrir o app em `http://localhost:5173` (ou `npm run dev:web` na raiz para obter o mesmo resultado).
 
 ### Recursos disponíveis
 
