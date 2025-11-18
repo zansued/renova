@@ -74,6 +74,14 @@ Esse comando copia todos os `.env.example` para `.env` (sem sobrescrever arquivo
 
 ---
 
+## 🌍 Demo hospedada em GitHub Pages
+
+Todo commit na branch `main` dispara o workflow **Deploy demo to GitHub Pages**, que compila `apps/web` e publica o conteúdo em `https://<seu-usuario>.github.io/renova/`. Para que o frontend saiba qual API usar, defina o secret `DEMO_API_URL` no repositório (por exemplo, apontando para uma instância limitada de `/analyze`). Caso o secret não exista, o build usa `https://renova-api-demo.example.com` como valor padrão – você pode atualizar esse domínio a qualquer momento.
+
+> Após o primeiro deploy, basta ativar o GitHub Pages com a fonte “GitHub Actions” nas configurações do repositório para que o link público fique ativo.
+
+---
+
 ## 📜 Licença
 
 Distribuído sob a licença **GNU General Public License v3.0**.  
@@ -149,3 +157,24 @@ Para quem quiser testar o Renova rapidamente, o repositório já inclui Dockerfi
 3. Abra `http://localhost:8080` no navegador para usar o app. O frontend já aponta para a API interna usando a variável `VITE_API_URL` definida no `docker-compose.yml`.
 
 > 💡 Quer apontar para outra API ou senha do Redis? Use `VITE_API_URL` e `REDIS_PASSWORD` como variáveis de ambiente ao rodar `docker compose`, por exemplo `VITE_API_URL=https://sua-api docker compose up`.
+
+---
+
+## 📦 Imagens Docker publicadas (GHCR)
+
+Sempre que a branch `main` recebe commits (ou quando você dispara manualmente `workflow_dispatch`), o workflow **Publish Docker images** gera e publica imagens prontas no [GitHub Container Registry (GHCR)](https://ghcr.io):
+
+- `ghcr.io/<seu-usuario>/renova-api`
+- `ghcr.io/<seu-usuario>/renova-web`
+
+Cada build recebe as tags `latest` e o hash do commit (`:${GITHUB_SHA}`) para facilitar rollbacks. Para testar rapidamente em qualquer servidor com Docker instalado, basta executar:
+
+```bash
+docker run -p 3000:3000 ghcr.io/<seu-usuario>/renova-api:latest
+
+docker run -p 8080:80 \
+  -e VITE_API_URL=http://host.docker.internal:3000 \
+  ghcr.io/<seu-usuario>/renova-web:latest
+```
+
+> Essas mesmas imagens podem ser usadas em plataformas como Render, Railway ou Fly.io sem necessidade de clonar o repositório. Basta apontar o deploy para `ghcr.io/<seu-usuario>/renova-*` e configurar as variáveis de ambiente adequadas.
