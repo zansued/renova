@@ -36,7 +36,11 @@ const EmotionForm: React.FC<EmotionFormProps> = ({ initial, onSubmit, onCancel }
   };
 
   return (
-    <form className="emotion-form" onSubmit={handleSubmit} aria-label="formulário de registro emocional">
+    <form
+      className="emotion-form form-animate"
+      onSubmit={handleSubmit}
+      aria-label="formulário de registro emocional"
+    >
       <div className="form-grid">
         <label htmlFor="title">Título</label>
         <input
