@@ -44,6 +44,19 @@ router.post("/", rateLimiter, async (req, res) => {
   // Verifica se já existe cache
   const cacheKey = `analyze:${normalizedTexto.toLowerCase()}`;
   const cache = await redis.get(cacheKey);
+router.post("/", async (req, res) => {
+  const { texto } = req.body ?? {};
+  if (typeof texto !== "string" || !texto.trim()) {
+    return res.status(400).json({ error: "Texto é obrigatório e deve ser uma string" });
+  }
+
+  const normalizedTexto = texto.trim();
+  if (normalizedTexto.length > 500) {
+    return res.status(400).json({ error: "Texto excede o limite de 500 caracteres" });
+  }
+
+  // Verifica se já existe cache
+  const cache = await redis.get(texto);
   if (cache) {
     const cachedResult = JSON.parse(cache);
     return res.json({ cached: true, ...cachedResult });
