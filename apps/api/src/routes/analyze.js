@@ -8,7 +8,10 @@ router.post("/", async (req, res) => {
 
   // Verifica se já existe cache
   const cache = await redis.get(texto);
-  if (cache) return res.json({ cached: true, resultado: JSON.parse(cache) });
+  if (cache) {
+    const cachedResult = JSON.parse(cache);
+    return res.json({ cached: true, ...cachedResult });
+  }
 
   // Simula análise emocional
   const resultado = {
@@ -20,7 +23,7 @@ router.post("/", async (req, res) => {
   // Armazena no cache por 10 minutos
   await redis.set(texto, JSON.stringify(resultado), "EX", 600);
 
-  res.json({ cached: false, resultado });
+  res.json({ cached: false, ...resultado });
 });
 
 export default router;
