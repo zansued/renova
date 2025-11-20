@@ -3,7 +3,7 @@ import { EmotionEntry } from '../types';
 
 type EmotionFormProps = {
   initial?: EmotionEntry;
-  onSubmit: (data: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => void;
+  onSubmit: (data: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => Promise<void>;
   onCancel: () => void;
 };
 
@@ -13,6 +13,7 @@ const EmotionForm: React.FC<EmotionFormProps> = ({ initial, onSubmit, onCancel }
   const [intensity, setIntensity] = useState(5);
   const [triggers, setTriggers] = useState('');
   const [strategies, setStrategies] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (initial) {
@@ -24,9 +25,14 @@ const EmotionForm: React.FC<EmotionFormProps> = ({ initial, onSubmit, onCancel }
     }
   }, [initial]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit({ title, emotion, intensity, triggers, strategies });
+    setSubmitting(true);
+    try {
+      await onSubmit({ title, emotion, intensity, triggers, strategies });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -85,7 +91,7 @@ const EmotionForm: React.FC<EmotionFormProps> = ({ initial, onSubmit, onCancel }
         />
       </div>
       <div className="form-actions">
-        <button type="submit" className="primary-button">
+        <button type="submit" className="primary-button" disabled={submitting}>
           {initial ? 'Atualizar registro' : 'Salvar registro'}
         </button>
         <button type="button" className="secondary-button" onClick={onCancel}>

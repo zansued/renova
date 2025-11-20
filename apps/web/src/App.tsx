@@ -6,8 +6,7 @@ import AppHeader from './components/AppHeader';
 import EmotionForm from './components/EmotionForm';
 import EmotionList from './components/EmotionList';
 import { EmotionEntry } from './types';
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+import { API_URL } from './config';
 
 const Dashboard: React.FC = () => {
   const { entries, addEntry, updateEntry, deleteEntry, setAnalysis } = useEmotions();
@@ -31,16 +30,34 @@ const Dashboard: React.FC = () => {
     setIsCreating(true);
   };
 
-  const handleSubmit = (data: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => {
-    if (selected) {
-      updateEntry(selected.id, data);
-      setStatusMessage('Registro atualizado com sucesso.');
-    } else {
-      addEntry(data);
-      setStatusMessage('Registro criado com carinho.');
+  const handleSubmit = async (data: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => {
+    try {
+      if (selected) {
+        await updateEntry(selected.id, data);
+        setStatusMessage('Registro atualizado com sucesso.');
+      } else {
+        await addEntry(data);
+        setStatusMessage('Registro criado com carinho.');
+      }
+      closeForm();
+    } catch (error) {
+      console.error(error);
+      setStatusMessage('Não foi possível salvar seu registro.');
+    } finally {
+      setTimeout(() => setStatusMessage(null), 4000);
     }
-    closeForm();
-    setTimeout(() => setStatusMessage(null), 4000);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteEntry(id);
+      setStatusMessage('Registro removido com sucesso.');
+    } catch (error) {
+      console.error(error);
+      setStatusMessage('Não foi possível remover o registro.');
+    } finally {
+      setTimeout(() => setStatusMessage(null), 4000);
+    }
   };
 
   const handleAnalyze = async (entry: EmotionEntry) => {
@@ -60,7 +77,7 @@ const Dashboard: React.FC = () => {
       }
 
       const result = await response.json();
-      setAnalysis(entry.id, {
+      await setAnalysis(entry.id, {
         emotion: result.emocao,
         intensidade: result.intensidade,
         cached: result.cached
@@ -97,7 +114,7 @@ const Dashboard: React.FC = () => {
             setSelected(entry);
             setIsCreating(false);
           }}
-          onDelete={deleteEntry}
+          onDelete={handleDelete}
           onAnalyze={handleAnalyze}
         />
       </section>
