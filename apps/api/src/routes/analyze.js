@@ -14,8 +14,7 @@ router.post("/", async (req, res) => {
   }
 
   // Verifica se já existe cache
-  const cacheKey = `analyze:${normalizedTexto}`;
-  const cache = await redis.get(cacheKey);
+  const cache = await redis.get(texto);
   if (cache) {
     const cachedResult = JSON.parse(cache);
     return res.json({ cached: true, ...cachedResult });
