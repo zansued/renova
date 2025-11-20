@@ -107,9 +107,15 @@ body {
   box-shadow: 0 12px 30px -15px rgba(99, 102, 241, 0.7);
 }
 
-.primary-button:hover {
+.primary-button:hover,
+.primary-button:focus-visible {
   transform: translateY(-1px);
   box-shadow: 0 16px 32px -16px rgba(99, 102, 241, 0.65);
+}
+
+.primary-button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 24px -16px rgba(99, 102, 241, 0.55);
 }
 
 .secondary-button {
@@ -117,8 +123,13 @@ body {
   color: #433b8f;
 }
 
-.secondary-button:hover {
+.secondary-button:hover,
+.secondary-button:focus-visible {
   background: rgba(99, 102, 241, 0.18);
+}
+
+.secondary-button:active {
+  background: rgba(99, 102, 241, 0.22);
 }
 
 .danger-button {
@@ -126,7 +137,8 @@ body {
   color: #b91c1c;
 }
 
-.danger-button:hover {
+.danger-button:hover,
+.danger-button:focus-visible {
   background: rgba(244, 63, 94, 0.18);
 }
 
