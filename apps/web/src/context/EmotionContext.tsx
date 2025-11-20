@@ -1,13 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { EmotionEntry } from '../types';
 import { useAuth } from './AuthContext';
+import { API_URL } from '../config';
 
 interface EmotionContextValue {
   entries: EmotionEntry[];
-  addEntry: (entry: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => void;
-  updateEntry: (id: string, updates: Partial<Omit<EmotionEntry, 'id' | 'createdAt'>>) => void;
-  deleteEntry: (id: string) => void;
-  setAnalysis: (id: string, analysis: EmotionEntry['analysis']) => void;
+  addEntry: (entry: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => Promise<void>;
+  updateEntry: (id: string, updates: Partial<Omit<EmotionEntry, 'id' | 'createdAt'>>) => Promise<void>;
+  deleteEntry: (id: string) => Promise<void>;
+  setAnalysis: (id: string, analysis: EmotionEntry['analysis']) => Promise<void>;
 }
 
 const EmotionContext = createContext<EmotionContextValue | undefined>(undefined);
@@ -17,72 +18,116 @@ export const EmotionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [entries, setEntries] = useState<EmotionEntry[]>([]);
 
   useEffect(() => {
-    if (!user) {
-      setEntries([]);
-      return;
-    }
-    const stored = localStorage.getItem(`renova:entries:${user}`);
-    if (stored) {
-      setEntries(JSON.parse(stored));
-    } else {
-      setEntries([]);
-    }
+    let cancelled = false;
+
+    const loadEntries = async () => {
+      if (!user) {
+        setEntries([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/entries`, {
+          headers: {
+            'x-user-id': user
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Falha ao carregar registros');
+        }
+
+        const data = await response.json();
+        if (!cancelled) {
+          setEntries(data);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar registros', error);
+        if (!cancelled) {
+          setEntries([]);
+        }
+      }
+    };
+
+    loadEntries();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`renova:entries:${user}`, JSON.stringify(entries));
-    }
-  }, [entries, user]);
-
   const addEntry = useCallback(
-    (entry: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => {
-      const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    async (entry: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => {
+      if (!user) throw new Error('Usuário não autenticado');
 
-      setEntries(prev => [
-        {
-          ...entry,
-          id,
-          createdAt: new Date().toISOString()
+      const response = await fetch(`${API_URL}/entries`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user
         },
-        ...prev
-      ]);
+        body: JSON.stringify(entry)
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao salvar registro');
+      }
+
+      const created = await response.json();
+      setEntries(prev => [created, ...prev]);
     },
-    []
+    [user]
   );
 
-  const updateEntry = useCallback((id: string, updates: Partial<Omit<EmotionEntry, 'id' | 'createdAt'>>) => {
-    setEntries(prev =>
-      prev.map(item =>
-        item.id === id
-          ? {
-              ...item,
-              ...updates,
-              analysis: updates.analysis !== undefined ? updates.analysis : item.analysis
-            }
-          : item
-      )
-    );
-  }, []);
+  const updateEntry = useCallback(
+    async (id: string, updates: Partial<Omit<EmotionEntry, 'id' | 'createdAt'>>) => {
+      if (!user) throw new Error('Usuário não autenticado');
 
-  const deleteEntry = useCallback((id: string) => {
-    setEntries(prev => prev.filter(item => item.id !== id));
-  }, []);
+      const response = await fetch(`${API_URL}/entries/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user
+        },
+        body: JSON.stringify(updates)
+      });
 
-  const setAnalysis = useCallback((id: string, analysis: EmotionEntry['analysis']) => {
-    setEntries(prev =>
-      prev.map(item =>
-        item.id === id
-          ? {
-              ...item,
-              analysis
-            }
-          : item
-      )
-    );
-  }, []);
+      if (!response.ok) {
+        throw new Error('Falha ao atualizar registro');
+      }
+
+      const updated = await response.json();
+      setEntries(prev => prev.map(item => (item.id === id ? updated : item)));
+    },
+    [user]
+  );
+
+  const deleteEntry = useCallback(
+    async (id: string) => {
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const response = await fetch(`${API_URL}/entries/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'x-user-id': user
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao excluir registro');
+      }
+
+      setEntries(prev => prev.filter(item => item.id !== id));
+    },
+    [user]
+  );
+
+  const setAnalysis = useCallback(
+    async (id: string, analysis: EmotionEntry['analysis']) => {
+      await updateEntry(id, { analysis });
+    },
+    [updateEntry]
+  );
 
   const value = useMemo(
     () => ({ entries, addEntry, updateEntry, deleteEntry, setAnalysis }),

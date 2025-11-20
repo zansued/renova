@@ -6,15 +6,16 @@ import AppHeader from './components/AppHeader';
 import EmotionForm from './components/EmotionForm';
 import EmotionList from './components/EmotionList';
 import { EmotionEntry } from './types';
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+import { API_URL } from './config';
 
 const Dashboard: React.FC = () => {
   const { entries, addEntry, updateEntry, deleteEntry, setAnalysis } = useEmotions();
   const [selected, setSelected] = useState<EmotionEntry | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [analysisState, setAnalysisState] = useState<
+    Record<string, { status: 'idle' | 'loading' | 'success' | 'error'; message?: string }>
+  >({});
 
   const sortedEntries = useMemo(
     () => [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
@@ -31,21 +32,41 @@ const Dashboard: React.FC = () => {
     setIsCreating(true);
   };
 
-  const handleSubmit = (data: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => {
-    if (selected) {
-      updateEntry(selected.id, data);
-      setStatusMessage('Registro atualizado com sucesso.');
-    } else {
-      addEntry(data);
-      setStatusMessage('Registro criado com carinho.');
+  const handleSubmit = async (data: Omit<EmotionEntry, 'id' | 'createdAt' | 'analysis'>) => {
+    try {
+      if (selected) {
+        await updateEntry(selected.id, data);
+        setStatusMessage('Registro atualizado com sucesso.');
+      } else {
+        await addEntry(data);
+        setStatusMessage('Registro criado com carinho.');
+      }
+      closeForm();
+    } catch (error) {
+      console.error(error);
+      setStatusMessage('Não foi possível salvar seu registro.');
+    } finally {
+      setTimeout(() => setStatusMessage(null), 4000);
     }
-    closeForm();
-    setTimeout(() => setStatusMessage(null), 4000);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteEntry(id);
+      setStatusMessage('Registro removido com sucesso.');
+    } catch (error) {
+      console.error(error);
+      setStatusMessage('Não foi possível remover o registro.');
+    } finally {
+      setTimeout(() => setStatusMessage(null), 4000);
+    }
   };
 
   const handleAnalyze = async (entry: EmotionEntry) => {
-    setLoadingId(entry.id);
-    setStatusMessage('Consultando insights da IA...');
+    setAnalysisState(prev => ({
+      ...prev,
+      [entry.id]: { status: 'loading', message: 'Consultando insights da IA...' }
+    }));
     try {
       const response = await fetch(`${API_URL}/analyze`, {
         method: 'POST',
@@ -60,18 +81,33 @@ const Dashboard: React.FC = () => {
       }
 
       const result = await response.json();
-      setAnalysis(entry.id, {
+      await setAnalysis(entry.id, {
         emotion: result.emocao,
         intensidade: result.intensidade,
         cached: result.cached
       });
-      setStatusMessage('Análise atualizada com sucesso.');
+      setAnalysisState(prev => ({
+        ...prev,
+        [entry.id]: { status: 'success', message: 'Análise atualizada com sucesso.' }
+      }));
     } catch (error) {
       console.error(error);
-      setStatusMessage('Não foi possível obter a análise. Tente novamente mais tarde.');
+      setAnalysisState(prev => ({
+        ...prev,
+        [entry.id]: { status: 'error', message: 'Não foi possível obter a análise.' }
+      }));
     } finally {
-      setLoadingId(null);
-      setTimeout(() => setStatusMessage(null), 4000);
+      setTimeout(() => {
+        setAnalysisState(prev => {
+          const current = prev[entry.id];
+          if (current && current.status !== 'loading') {
+            const next = { ...prev };
+            delete next[entry.id];
+            return next;
+          }
+          return prev;
+        });
+      }, 4000);
     }
   };
 
@@ -80,7 +116,7 @@ const Dashboard: React.FC = () => {
       <AppHeader onCreate={handleCreate} />
       {statusMessage && (
         <div role="status" className="status-banner" aria-live="assertive">
-          {loadingId ? 'Analisando...' : statusMessage}
+          {statusMessage}
         </div>
       )}
       <section className="content-area">
@@ -97,11 +133,11 @@ const Dashboard: React.FC = () => {
             setSelected(entry);
             setIsCreating(false);
           }}
-          onDelete={deleteEntry}
+          onDelete={handleDelete}
           onAnalyze={handleAnalyze}
+          analysisState={analysisState}
         />
       </section>
-      {loadingId && <div className="loading-overlay" aria-hidden="true" />}
     </div>
   );
 };

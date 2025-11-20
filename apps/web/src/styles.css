@@ -93,15 +93,30 @@ body {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.danger-button:focus-visible {
+  outline: 3px solid #433b8f;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  transform: translateY(-1px);
+}
+
 .primary-button {
   background: linear-gradient(135deg, #a5b4fc, #818cf8);
   color: #1f1933;
   box-shadow: 0 12px 30px -15px rgba(99, 102, 241, 0.7);
 }
 
-.primary-button:hover {
+.primary-button:hover,
+.primary-button:focus-visible {
   transform: translateY(-1px);
   box-shadow: 0 16px 32px -16px rgba(99, 102, 241, 0.65);
+}
+
+.primary-button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 24px -16px rgba(99, 102, 241, 0.55);
 }
 
 .secondary-button {
@@ -109,8 +124,13 @@ body {
   color: #433b8f;
 }
 
-.secondary-button:hover {
+.secondary-button:hover,
+.secondary-button:focus-visible {
   background: rgba(99, 102, 241, 0.18);
+}
+
+.secondary-button:active {
+  background: rgba(99, 102, 241, 0.22);
 }
 
 .danger-button {
@@ -118,8 +138,22 @@ body {
   color: #b91c1c;
 }
 
-.danger-button:hover {
+.danger-button:hover,
+.danger-button:focus-visible {
   background: rgba(244, 63, 94, 0.18);
+}
+
+.danger-button:active {
+  background: rgba(244, 63, 94, 0.24);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .auth-footnote {
@@ -206,6 +240,91 @@ body {
   display: grid;
   gap: 1.25rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.form-animate {
+  animation: form-fade-in 240ms cubic-bezier(0.25, 0.8, 0.35, 1);
+  transform-origin: top center;
+}
+
+.form-animate .form-grid > * {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: field-rise 220ms ease forwards;
+}
+
+.form-animate .form-grid > *:nth-child(1) { --field-delay: 40ms; }
+.form-animate .form-grid > *:nth-child(2) { --field-delay: 70ms; }
+.form-animate .form-grid > *:nth-child(3) { --field-delay: 100ms; }
+.form-animate .form-grid > *:nth-child(4) { --field-delay: 130ms; }
+.form-animate .form-grid > *:nth-child(5) { --field-delay: 160ms; }
+.form-animate .form-grid > *:nth-child(6) { --field-delay: 190ms; }
+.form-animate .form-grid > *:nth-child(7) { --field-delay: 220ms; }
+.form-animate .form-grid > *:nth-child(8) { --field-delay: 250ms; }
+.form-animate .form-grid > *:nth-child(9) { --field-delay: 280ms; }
+.form-animate .form-grid > *:nth-child(10) { --field-delay: 310ms; }
+.form-animate .form-grid > *:nth-child(11) { --field-delay: 340ms; }
+.form-animate .form-grid > *:nth-child(12) { --field-delay: 370ms; }
+
+.form-animate .form-grid > * {
+  animation-delay: var(--field-delay, 40ms);
+}
+
+.form-animate .form-actions {
+  animation: form-actions-rise 240ms ease forwards;
+  animation-delay: 380ms;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes form-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes field-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes form-actions-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-animate {
+    animation: none;
+  }
+
+  .analysis-chip {
+    transition: none;
+  }
+
+  .form-animate .form-grid > *,
+  .form-animate .form-actions {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .form-grid {
@@ -308,6 +427,27 @@ body {
   justify-content: space-between;
 }
 
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 240px;
+}
+
+.analysis-status {
+  min-height: 1.5rem;
+  color: #433b8f;
+  font-weight: 600;
+}
+
+.analysis-status.status-error {
+  color: #b91c1c;
+}
+
+.analysis-status.status-success {
+  color: #0f766e;
+}
+
 .analysis-chip {
   display: inline-flex;
   gap: 0.5rem;
@@ -317,6 +457,22 @@ body {
   border-radius: 999px;
   color: #433b8f;
   font-weight: 500;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease,
+    border-color 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.analysis-chip:hover {
+  background: rgba(99, 102, 241, 0.16);
+  transform: translateY(-1px);
+}
+
+.analysis-chip:focus-visible {
+  outline: 2px solid #433b8f;
+  outline-offset: 3px;
+  box-shadow: 0 12px 30px -18px rgba(99, 102, 241, 0.45);
+  transform: translateY(-1px);
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .chip-label {
