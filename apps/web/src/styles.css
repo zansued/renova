@@ -93,6 +93,14 @@ body {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.danger-button:focus-visible {
+  outline: 3px solid #433b8f;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
 .primary-button {
   background: linear-gradient(135deg, #a5b4fc, #818cf8);
   color: #1f1933;
@@ -120,6 +128,15 @@ body {
 
 .danger-button:hover {
   background: rgba(244, 63, 94, 0.18);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .auth-footnote {
@@ -206,6 +223,32 @@ body {
   display: grid;
   gap: 1.25rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.form-animate {
+  animation: form-fade-in 240ms cubic-bezier(0.25, 0.8, 0.35, 1);
+  transform-origin: top center;
+}
+
+@keyframes form-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-animate {
+    animation: none;
+  }
+
+  .analysis-chip {
+    transition: none;
+  }
 }
 
 .form-grid {
@@ -308,6 +351,27 @@ body {
   justify-content: space-between;
 }
 
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 240px;
+}
+
+.analysis-status {
+  min-height: 1.5rem;
+  color: #433b8f;
+  font-weight: 600;
+}
+
+.analysis-status.status-error {
+  color: #b91c1c;
+}
+
+.analysis-status.status-success {
+  color: #0f766e;
+}
+
 .analysis-chip {
   display: inline-flex;
   gap: 0.5rem;
@@ -317,6 +381,19 @@ body {
   border-radius: 999px;
   color: #433b8f;
   font-weight: 500;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+
+.analysis-chip:hover {
+  background: rgba(99, 102, 241, 0.16);
+  transform: translateY(-1px);
+}
+
+.analysis-chip:focus-visible {
+  outline: 2px solid #433b8f;
+  outline-offset: 3px;
+  box-shadow: 0 10px 30px -20px rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
 }
 
 .chip-label {
