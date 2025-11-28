@@ -2,18 +2,39 @@ version: "3.9"
 
 services:
   redis:
-    ports:
-      - "127.0.0.1:6379:6379"
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-redispass_ChangeMe123!}"]
+    volumes:
+      - redis_data:/data
+    expose:
+      - "6379"
 
   api:
-    ports: []
+    build:
+      context: ./apps/api
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redispass_ChangeMe123!}
     expose:
       - "3000"
+    depends_on:
+      - redis
 
   web:
-    ports: []
+    build:
+      context: ./apps/web
+      args:
+        # O frontend chama a API por HTTPS via reverse proxy (subdomínio api.)
+        VITE_API_URL: ${VITE_API_URL:-https://api.renova.techstorebrasil.com}
+    restart: unless-stopped
     expose:
       - "80"
+    depends_on:
+      - api
 
   reverse-proxy:
     image: caddy:2.7-alpine
@@ -25,8 +46,16 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      APP_DOMAIN: ${APP_DOMAIN:-app.example.com}
-      API_DOMAIN: ${API_DOMAIN:-api.example.com}
-      CADDY_EMAIL: ${CADDY_EMAIL:-admin@example.com}
+      # Domínios já prontos para a VPS
+      APP_DOMAIN: ${APP_DOMAIN:-renova.techstorebrasil.com}
+      API_DOMAIN: ${API_DOMAIN:-api.renova.techstorebrasil.com}
+      CADDY_EMAIL: ${CADDY_EMAIL:-admin@renova.techstorebrasil.com}
     volumes:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  redis_data:
+  caddy_data:
+  caddy_config:
