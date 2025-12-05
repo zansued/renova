@@ -1,0 +1,6 @@
+{
+  "installCommand": "if [ -f ../package.json ]; then cd ..; fi; npm install --include=dev",
+  "buildCommand": "if [ -f ../package.json ]; then cd ..; fi; npm run build:web",
+  "outputDirectory": "apps/web/dist",
+  "framework": "vite"
+}
