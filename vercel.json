@@ -1,0 +1,6 @@
+{
+  "installCommand": "ROOT=\"$PWD\"; while [ \"$ROOT\" != \"/\" ]; do if [ -f \"$ROOT/package.json\" ] && grep -q '\\"workspaces\\"' \"$ROOT/package.json\"; then break; fi; ROOT=\"$(dirname \"$ROOT\")\"; done; cd \"$ROOT\" && npm install --include=dev",
+  "buildCommand": "ROOT=\"$PWD\"; while [ \"$ROOT\" != \"/\" ]; do if [ -f \"$ROOT/package.json\" ] && grep -q '\\"workspaces\\"' \"$ROOT/package.json\"; then break; fi; ROOT=\"$(dirname \"$ROOT\")\"; done; cd \"$ROOT\" && npm run build:web",
+  "outputDirectory": "apps/web/dist",
+  "framework": "vite"
+}
