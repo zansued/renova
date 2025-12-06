@@ -1,0 +1,6 @@
+{
+  "installCommand": "ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; cd \"$ROOT\" && npm install --include=dev",
+  "buildCommand": "ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; cd \"$ROOT\" && npm run build:web",
+  "outputDirectory": "apps/web/dist",
+  "framework": "vite"
+}
