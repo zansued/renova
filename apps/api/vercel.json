@@ -1,0 +1,6 @@
+{
+  "installCommand": "cd \"$(git rev-parse --show-toplevel)\" && npm install --include=dev",
+  "buildCommand": "cd \"$(git rev-parse --show-toplevel)\" && npm run build:web",
+  "outputDirectory": "../web/dist",
+  "framework": "vite"
+}
