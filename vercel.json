@@ -1,0 +1,6 @@
+{
+  "installCommand": "while [ ! -f package.json ]; do cd ..; done; npm install --include=dev",
+  "buildCommand": "while [ ! -f package.json ]; do cd ..; done; npm run build:web",
+  "outputDirectory": "apps/web/dist",
+  "framework": "vite"
+}
