@@ -83,7 +83,7 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
                 </div>
               </div>
               {entry.analysis && (
-                <div className="analysis-chip" aria-live="polite" tabIndex={0} role="note">
+                <div className="analysis-chip" aria-live="polite">
                   <span className="chip-label">Emoção sugerida:</span>
                   <span>{entry.analysis.emotion}</span>
                   <span>Intensidade: {entry.analysis.intensidade}</span>
