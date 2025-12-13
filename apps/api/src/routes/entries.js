@@ -1,6 +1,6 @@
 import express from "express";
 import { randomUUID } from "crypto";
-import redis from "../config/redis.js";
+import storageService from "../services/StorageService.js";
 
 const router = express.Router();
 
@@ -118,17 +118,6 @@ const ensureUser = (req, res, next) => {
   next();
 };
 
-const entriesKey = userId => `entries:${userId}`;
-
-const readEntries = async userId => {
-  const stored = await redis.get(entriesKey(userId));
-  return stored ? JSON.parse(stored) : [];
-};
-
-const writeEntries = async (userId, entries) => {
-  await redis.set(entriesKey(userId), JSON.stringify(entries));
-};
-
 const validateEntryPayload = (payload, { partial = false } = {}) => {
   const errors = [];
 
@@ -185,8 +174,13 @@ const normalizeUpdates = payload => {
 router.use(ensureUser);
 
 router.get("/", async (req, res) => {
-  const entries = await readEntries(req.userId);
-  res.json(entries);
+  try {
+    const entries = await storageService.getEntries(req.userId);
+    res.json(entries);
+  } catch (error) {
+    console.error("Erro ao buscar entradas:", error);
+    res.status(500).json({ error: "Erro interno ao carregar registros" });
+  }
 });
 
 router.post("/", async (req, res) => {
@@ -195,17 +189,19 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: errors.join("; ") });
   }
 
-  const entries = await readEntries(req.userId);
-  const newEntry = {
-    ...normalizeNewEntry(req.body),
-    id: randomUUID(),
-    createdAt: new Date().toISOString(),
-  };
+  try {
+    const newEntry = {
+      ...normalizeNewEntry(req.body),
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
 
-  entries.unshift(newEntry);
-  await writeEntries(req.userId, entries);
-
-  res.status(201).json(newEntry);
+    const savedEntry = await storageService.addEntry(req.userId, newEntry);
+    res.status(201).json(savedEntry);
+  } catch (error) {
+    console.error("Erro ao criar entrada:", error);
+    res.status(500).json({ error: "Erro interno ao salvar registro" });
+  }
 });
 
 router.put("/:id", async (req, res) => {
@@ -220,29 +216,26 @@ router.put("/:id", async (req, res) => {
     return res.status(400).json({ error: errors.join("; ") });
   }
 
-  const entries = await readEntries(req.userId);
-  const index = entries.findIndex(entry => entry.id === req.params.id);
-
-  if (index === -1) {
-    return res.status(404).json({ error: "Registro não encontrado" });
+  try {
+    const updatedEntry = await storageService.updateEntry(req.userId, req.params.id, normalizeUpdates(updates));
+    res.json(updatedEntry);
+  } catch (error) {
+    if (error.message === "Registro não encontrado") {
+      return res.status(404).json({ error: "Registro não encontrado" });
+    }
+    console.error("Erro ao atualizar entrada:", error);
+    res.status(500).json({ error: "Erro interno ao atualizar registro" });
   }
-
-  entries[index] = { ...entries[index], ...normalizeUpdates(updates) };
-  await writeEntries(req.userId, entries);
-
-  res.json(entries[index]);
 });
 
 router.delete("/:id", async (req, res) => {
-  const entries = await readEntries(req.userId);
-  const remaining = entries.filter(entry => entry.id !== req.params.id);
-
-  if (remaining.length === entries.length) {
-    return res.status(404).json({ error: "Registro não encontrado" });
+  try {
+    await storageService.deleteEntry(req.userId, req.params.id);
+    res.status(204).end();
+  } catch (error) {
+    console.error("Erro ao deletar entrada:", error);
+    res.status(500).json({ error: "Erro interno ao excluir registro" });
   }
-
-  await writeEntries(req.userId, remaining);
-  res.status(204).end();
 });
 
 export default router;

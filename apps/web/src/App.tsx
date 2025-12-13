@@ -5,6 +5,8 @@ import LoginPanel from './components/LoginPanel';
 import AppHeader from './components/AppHeader';
 import EmotionForm from './components/EmotionForm';
 import EmotionList from './components/EmotionList';
+import ProfilePanel from './components/ProfilePanel';
+import Navigation from './components/Navigation';
 import { EmotionEntry } from './types';
 import { API_URL } from './config';
 
@@ -144,6 +146,7 @@ const Dashboard: React.FC = () => {
 
 const AuthenticatedApp: React.FC = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'profile'>('dashboard');
 
   if (!user) {
     return <LoginPanel />;
@@ -151,7 +154,10 @@ const AuthenticatedApp: React.FC = () => {
 
   return (
     <EmotionProvider>
-      <Dashboard />
+      <div className="authenticated-app">
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+        {activeTab === 'dashboard' ? <Dashboard /> : <ProfilePanel />}
+      </div>
     </EmotionProvider>
   );
 };
