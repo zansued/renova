@@ -9,12 +9,18 @@ interface EmotionListProps {
   analysisState: Record<string, { status: 'idle' | 'loading' | 'success' | 'error'; message?: string }>;
 }
 
+const getIntensityColor = (intensity: number) => {
+  if (intensity <= 3) return '#A7E9AF'; // Mint
+  if (intensity <= 6) return '#E0BBE4'; // Violet
+  return '#FFCCCB'; // Coral
+};
+
 const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, onAnalyze, analysisState }) => {
   if (entries.length === 0) {
     return (
       <div className="empty-state" role="status">
-        <h3>Comece registrando sua primeira emoção</h3>
-        <p>Suas reflexões aparecem aqui com recomendações e análises.</p>
+        <h3>🌱 Comece registrando sua primeira emoção</h3>
+        <p>Seus registros emocionais aparecerão aqui com recomendações e análises.</p>
       </div>
     );
   }
@@ -33,31 +39,38 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
               <div>
                 <h3>{entry.title}</h3>
                 <p className="emotion-meta">
-                  <span>{new Date(entry.createdAt).toLocaleString('pt-BR')}</span>
-                  <span>{entry.emotion}</span>
-                  <span>Intensidade: {entry.intensity}</span>
+                  <span>📅 {new Date(entry.createdAt).toLocaleDateString('pt-BR')}</span>
+                  <span>💭 {entry.emotion}</span>
+                  <span>
+                    <span 
+                      className="intensity-indicator" 
+                      style={{ backgroundColor: getIntensityColor(entry.intensity) }}
+                      aria-hidden="true"
+                    />
+                    Intensidade: {entry.intensity}/10
+                  </span>
                 </p>
               </div>
               <div className="card-actions">
                 <button onClick={() => onEdit(entry)} className="secondary-button" aria-label={`Editar ${entry.title}`}>
-                  Editar
+                  ✏️ Editar
                 </button>
                 <button
                   onClick={() => onDelete(entry.id)}
                   className="danger-button"
                   aria-label={`Excluir ${entry.title}`}
                 >
-                  Excluir
+                  🗑️ Excluir
                 </button>
               </div>
             </header>
             <section className="card-body">
               <div>
-                <h4>Fatores influenciadores</h4>
+                <h4>✨ Fatores influenciadores</h4>
                 <p>{entry.triggers || 'Sem observações registradas.'}</p>
               </div>
               <div>
-                <h4>Respostas e estratégias</h4>
+                <h4>🛡️ Respostas e estratégias</h4>
                 <p>{entry.strategies || 'Sem estratégias registradas.'}</p>
               </div>
             </section>
@@ -70,24 +83,24 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
                   disabled={isLoading}
                   aria-busy={isLoading}
                 >
-                  {isLoading ? 'Analisando...' : 'Obter análise de IA'}
+                  {isLoading ? '🔮 Analisando...' : '✨ Obter análise de IA'}
                 </button>
                 <div
                   className={`analysis-status ${isError ? 'status-error' : isSuccess ? 'status-success' : ''}`.trim()}
                   role="status"
                   aria-live={isError ? 'assertive' : 'polite'}
                 >
-                  {isLoading && <span>Consultando insights...</span>}
-                  {isSuccess && <span>{state?.message ?? 'Análise atualizada.'}</span>}
-                  {isError && <span>{state?.message ?? 'Não foi possível obter a análise.'}</span>}
+                  {isLoading && <span>Consultando insights... ⏳</span>}
+                  {isSuccess && <span>{state?.message ?? 'Análise atualizada com sucesso! ✅'}</span>}
+                  {isError && <span>{state?.message ?? 'Não foi possível obter a análise. ❌'}</span>}
                 </div>
               </div>
               {entry.analysis && (
                 <div className="analysis-chip" aria-live="polite">
                   <span className="chip-label">Emoção sugerida:</span>
                   <span>{entry.analysis.emotion}</span>
-                  <span>Intensidade: {entry.analysis.intensidade}</span>
-                  <span>{entry.analysis.cached ? 'do cache' : 'nova'}</span>
+                  <span>Intensidade: {entry.analysis.intensidade}%</span>
+                  <span>{entry.analysis.cached ? '🔄 do cache' : '🆕 nova'}</span>
                 </div>
               )}
             </footer>

@@ -41,7 +41,7 @@ const LoginPanel: React.FC = () => {
           />
           {error && <p role="alert" className="input-error">{error}</p>}
           <button type="submit" className="primary-button">
-            Entrar e começar
+            🌸 Entrar e começar
           </button>
         </form>
         <p className="auth-footnote">

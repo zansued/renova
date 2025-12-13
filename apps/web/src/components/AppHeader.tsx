@@ -11,7 +11,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ onCreate }) => {
     <header className="app-header">
       <div>
         <h1>Renova</h1>
-        <p className="header-subtitle">Reflita, registre e renove sua mente diariamente.</p>
+        <p className="header-subtitle">Transformai-vos pela renovação da mente - Romanos 12:2</p>
       </div>
       <div className="header-actions">
         <div className="user-pill" aria-label={`Usuário autenticado ${user}`}>
@@ -21,7 +21,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ onCreate }) => {
           <span>{user}</span>
         </div>
         <button className="primary-button" onClick={onCreate}>
-          Novo registro
+          ✨ Novo registro
         </button>
         <button className="secondary-button" onClick={logout}>
           Sair
