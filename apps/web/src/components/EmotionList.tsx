@@ -15,6 +15,15 @@ const getIntensityColor = (intensity: number) => {
   return '#FFCCCB'; // Coral
 };
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
 const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, onAnalyze, analysisState }) => {
   if (entries.length === 0) {
     return (
@@ -32,6 +41,7 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
         const isLoading = state?.status === 'loading';
         const isError = state?.status === 'error';
         const isSuccess = state?.status === 'success';
+        const metadata = entry.metadata || {};
 
         return (
           <li key={entry.id} className="emotion-card">
@@ -39,7 +49,7 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
               <div>
                 <h3>{entry.title}</h3>
                 <p className="emotion-meta">
-                  <span>📅 {new Date(entry.createdAt).toLocaleDateString('pt-BR')}</span>
+                  <span>📅 {formatDate(entry.createdAt)} {metadata.time && `• ${metadata.time}`}</span>
                   <span>💭 {entry.emotion}</span>
                   <span>
                     <span 
@@ -49,6 +59,9 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
                     />
                     Intensidade: {entry.intensity}/10
                   </span>
+                  {metadata.moodScale && (
+                    <span>😊 Humor: {metadata.moodScale}/10</span>
+                  )}
                 </p>
               </div>
               <div className="card-actions">
@@ -64,16 +77,50 @@ const EmotionList: React.FC<EmotionListProps> = ({ entries, onEdit, onDelete, on
                 </button>
               </div>
             </header>
+            
+            {metadata.tags && metadata.tags.length > 0 && (
+              <div className="metadata-section">
+                {metadata.tags.map((tag, index) => (
+                  <span key={index} className="metadata-chip tags">
+                    🏷️ {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            
             <section className="card-body">
               <div>
-                <h4>✨ Fatores influenciadores</h4>
+                <h4>✨ O que aconteceu?</h4>
                 <p>{entry.triggers || 'Sem observações registradas.'}</p>
+                {metadata.physicalTriggers && (
+                  <>
+                    <h4>💪 Sensações físicas</h4>
+                    <p>{metadata.physicalTriggers}</p>
+                  </>
+                )}
               </div>
+              
               <div>
-                <h4>🛡️ Respostas e estratégias</h4>
+                <h4>🛡️ Estratégias de enfrentamento</h4>
                 <p>{entry.strategies || 'Sem estratégias registradas.'}</p>
+                
+                {metadata.thoughtPattern && (
+                  <>
+                    <h4>🧠 Padrão de pensamento</h4>
+                    <p className="metadata-chip pattern">{metadata.thoughtPattern}</p>
+                  </>
+                )}
               </div>
             </section>
+            
+            {metadata.verse && (
+              <div className="metadata-section">
+                <span className="metadata-chip verse">
+                  ✝️ {metadata.verse}
+                </span>
+              </div>
+            )}
+            
             <footer className="card-footer">
               <div className="footer-actions">
                 <button

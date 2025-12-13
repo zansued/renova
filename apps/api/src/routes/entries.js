@@ -58,6 +58,56 @@ const validateAnalysis = analysis => {
   return null;
 };
 
+const validateMetadata = metadata => {
+  if (metadata === undefined) return null;
+  
+  if (typeof metadata !== "object" || metadata === null) {
+    return "Metadados devem ser um objeto válido";
+  }
+
+  const errors = [];
+  
+  if (metadata.date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(metadata.date)) {
+    errors.push("Data deve estar no formato YYYY-MM-DD");
+  }
+  
+  if (metadata.time !== undefined && !/^\d{2}:\d{2}$/.test(metadata.time)) {
+    errors.push("Hora deve estar no formato HH:MM");
+  }
+  
+  if (metadata.tags !== undefined && !Array.isArray(metadata.tags)) {
+    errors.push("Tags devem ser um array de strings");
+  } else if (Array.isArray(metadata.tags)) {
+    metadata.tags.forEach((tag, index) => {
+      if (typeof tag !== "string") {
+        errors.push(`Tag na posição ${index} deve ser uma string`);
+      }
+    });
+  }
+  
+  if (metadata.moodScale !== undefined) {
+    if (typeof metadata.moodScale !== "number" || !Number.isInteger(metadata.moodScale)) {
+      errors.push("Escala de humor deve ser um número inteiro");
+    } else if (metadata.moodScale < 1 || metadata.moodScale > 10) {
+      errors.push("Escala de humor deve estar entre 1 e 10");
+    }
+  }
+  
+  if (metadata.physicalTriggers !== undefined && typeof metadata.physicalTriggers !== "string") {
+    errors.push("Gatilhos físicos devem ser uma string");
+  }
+  
+  if (metadata.thoughtPattern !== undefined && typeof metadata.thoughtPattern !== "string") {
+    errors.push("Padrão de pensamento deve ser uma string");
+  }
+  
+  if (metadata.verse !== undefined && typeof metadata.verse !== "string") {
+    errors.push("Versículo deve ser uma string");
+  }
+
+  return errors.length > 0 ? errors.join("; ") : null;
+};
+
 const ensureUser = (req, res, next) => {
   const userId = req.header("x-user-id");
   if (!userId) {
@@ -102,6 +152,9 @@ const validateEntryPayload = (payload, { partial = false } = {}) => {
   const analysisError = validateAnalysis(payload.analysis);
   if (analysisError) errors.push(analysisError);
 
+  const metadataError = validateMetadata(payload.metadata);
+  if (metadataError) errors.push(metadataError);
+
   return errors;
 };
 
@@ -112,6 +165,7 @@ const normalizeNewEntry = payload => ({
   triggers: (payload.triggers ?? "").trim(),
   strategies: (payload.strategies ?? "").trim(),
   analysis: payload.analysis,
+  metadata: payload.metadata || {},
 });
 
 const normalizeUpdates = payload => {
@@ -123,6 +177,7 @@ const normalizeUpdates = payload => {
   if (payload.triggers !== undefined) normalized.triggers = payload.triggers.trim();
   if (payload.strategies !== undefined) normalized.strategies = payload.strategies.trim();
   if (payload.analysis !== undefined) normalized.analysis = payload.analysis;
+  if (payload.metadata !== undefined) normalized.metadata = payload.metadata;
 
   return normalized;
 };
