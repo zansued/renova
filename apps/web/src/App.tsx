@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { EmotionProvider, useEmotions } from './context/EmotionContext';
 import LoginPanel from './components/LoginPanel';
@@ -8,29 +8,16 @@ import EmotionList from './components/EmotionList';
 import ProfilePanel from './components/ProfilePanel';
 import Navigation from './components/Navigation';
 import { EmotionEntry } from './types';
-import { API_URL, checkApiHealth } from './config';
+import { API_URL } from './config';
 
 const Dashboard: React.FC = () => {
-  const { entries, addEntry, updateEntry, deleteEntry, setAnalysis, loading, error, syncWithSupabase } = useEmotions();
+  const { entries, addEntry, updateEntry, deleteEntry, setAnalysis } = useEmotions();
   const [selected, setSelected] = useState<EmotionEntry | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [analysisState, setAnalysisState] = useState<
     Record<string, { status: 'idle' | 'loading' | 'success' | 'error'; message?: string }>
   >({});
-  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
-
-  useEffect(() => {
-    const checkApi = async () => {
-      const isHealthy = await checkApiHealth();
-      setApiStatus(isHealthy ? 'online' : 'offline');
-    };
-    
-    checkApi();
-    const interval = setInterval(checkApi, 30000); // Verifica a cada 30 segundos
-    
-    return () => clearInterval(interval);
-  }, []);
 
   const sortedEntries = useMemo(
     () => [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
@@ -51,15 +38,15 @@ const Dashboard: React.FC = () => {
     try {
       if (selected) {
         await updateEntry(selected.id, data);
-        setStatusMessage('✅ Registro atualizado com sucesso.');
+        setStatusMessage('Registro atualizado com sucesso.');
       } else {
         await addEntry(data);
-        setStatusMessage('✨ Registro criado com carinho.');
+        setStatusMessage('Registro criado com carinho.');
       }
       closeForm();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      setStatusMessage(error.message || 'Não foi possível salvar seu registro.');
+      setStatusMessage('Não foi possível salvar seu registro.');
     } finally {
       setTimeout(() => setStatusMessage(null), 4000);
     }
@@ -68,22 +55,16 @@ const Dashboard: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteEntry(id);
-      setStatusMessage('🗑️ Registro removido com sucesso.');
-    } catch (error: any) {
+      setStatusMessage('Registro removido com sucesso.');
+    } catch (error) {
       console.error(error);
-      setStatusMessage(error.message || 'Não foi possível remover o registro.');
+      setStatusMessage('Não foi possível remover o registro.');
     } finally {
       setTimeout(() => setStatusMessage(null), 4000);
     }
   };
 
   const handleAnalyze = async (entry: EmotionEntry) => {
-    if (apiStatus === 'offline') {
-      setStatusMessage('⚠️ API offline. Análise de IA indisponível.');
-      setTimeout(() => setStatusMessage(null), 3000);
-      return;
-    }
-
     setAnalysisState(prev => ({
       ...prev,
       [entry.id]: { status: 'loading', message: 'Consultando insights da IA...' }
@@ -109,13 +90,13 @@ const Dashboard: React.FC = () => {
       });
       setAnalysisState(prev => ({
         ...prev,
-        [entry.id]: { status: 'success', message: '✅ Análise atualizada com sucesso.' }
+        [entry.id]: { status: 'success', message: 'Análise atualizada com sucesso.' }
       }));
     } catch (error) {
       console.error(error);
       setAnalysisState(prev => ({
         ...prev,
-        [entry.id]: { status: 'error', message: '❌ Não foi possível obter a análise.' }
+        [entry.id]: { status: 'error', message: 'Não foi possível obter a análise.' }
       }));
     } finally {
       setTimeout(() => {
@@ -135,36 +116,11 @@ const Dashboard: React.FC = () => {
   return (
     <div className="dashboard">
       <AppHeader onCreate={handleCreate} />
-      
-      <div className="status-bar">
-        {apiStatus === 'checking' && (
-          <div className="status-checking">🔍 Verificando conexão com API...</div>
-        )}
-        {apiStatus === 'offline' && (
-          <div className="status-offline">
-            ⚠️ API offline. Trabalhando no modo local. 
-            <button onClick={syncWithSupabase} className="sync-button">
-              🔄 Tentar sincronizar
-            </button>
-          </div>
-        )}
-        {apiStatus === 'online' && (
-          <div className="status-online">✅ Conectado à API</div>
-        )}
-        {error && (
-          <div className="status-error">⚠️ {error}</div>
-        )}
-        {loading && (
-          <div className="status-loading">⏳ Carregando...</div>
-        )}
-      </div>
-      
       {statusMessage && (
         <div role="status" className="status-banner" aria-live="assertive">
           {statusMessage}
         </div>
       )}
-      
       <section className="content-area">
         {(isCreating || selected) && (
           <EmotionForm
