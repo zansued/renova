@@ -110,7 +110,7 @@ As variáveis relevantes no `.env.example` são:
 ```
 REDIS_HOST=redis
 REDIS_PORT=6379
-REDIS_PASSWORD=
+REDIS_PASSWORD=redispass_Q6z9Bf82MpLmX4vw
 ```
 
 ## 🌸 Frontend web (apps/web)
